@@ -1,4 +1,3 @@
-// src/app/strategy-vaults/[id]/page.tsx
 import { vaultData } from "@/utils/constants";
 import React from "react";
 import { Box } from "@mui/material";
@@ -7,28 +6,10 @@ import VaultStats from "@/components/vault/VaultStats";
 import VaultPerformance from "@/components/vault/VaultPerformance";
 import DepositWithdrawForm from "@/components/vault/DepositWithdrawForm";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const index = Number(id) - 1;
-  const vault = vaultData[index];
-
-  if (!vault) {
-    // optional: show 404 if id is invalid
-    // import { notFound } from "next/navigation"; notFound();
-    return (
-      <Box
-        sx={{ backgroundColor: "primary.dark" }}
-        className="min-h-screen px-8 py-16"
-      >
-        <div className="text-white">Vault not found.</div>
-      </Box>
-    );
-  }
+  const vault = vaultData[Number(id) - 1];
 
   return (
     <Box
@@ -36,34 +17,39 @@ export default async function Page({
       className="min-h-screen px-8 py-16"
     >
       <div className="mx-auto">
+        {/* Header */}
         <VaultHeader
           name={vault.name}
           manager={vault.manager}
           icon={vault.icon}
         />
 
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-          {/* Stats */}
-          <div className="xl:col-span-2">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Stats */}
             <VaultStats
               apy={vault.apyValue}
               age={vault.ageValue}
               tvl={vault.tvl}
               capacity={vault.capacity}
             />
-          </div>
 
-          {/* Form */}
-          <div className="xl:col-span-1 xl:sticky xl:top-6">
-            <DepositWithdrawForm />
-          </div>
-
-          {/* Performance */}
-          <div className="xl:col-span-2">
+            {/* Performance Chart */}
             <VaultPerformance />
+          </div>
+
+          {/* Right Column - Deposit/Withdraw Form */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6">
+              <DepositWithdrawForm />
+            </div>
           </div>
         </div>
       </div>
     </Box>
   );
-}
+};
+
+export default page;
