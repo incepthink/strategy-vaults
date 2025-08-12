@@ -53,6 +53,18 @@ const MuiThemeProvider = ({ children }: any) => {
               },
             },
           },
+          {
+            props: { variant: "gradientRed" },
+            style: {
+              background:
+                "linear-gradient(to top, #3F1D38 0%, #AF5279 50%, #FFD6A5 100%)",
+              color: "#fff",
+              "&:hover": {
+                background:
+                  "linear-gradient(to top, #3F1D38 0%, #AF5279 50%, #FFD6A5 100%)",
+              },
+            },
+          },
         ],
       },
       MuiCard: {

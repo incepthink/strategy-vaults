@@ -7,6 +7,7 @@ import { PaperPropsVariantOverrides } from "@mui/material/Paper";
 declare module "@mui/material/Button" {
   interface ButtonPropsVariantOverrides {
     gradient: true;
+    gradientRed: true;
   }
 }
 

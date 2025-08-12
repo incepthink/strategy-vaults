@@ -15,6 +15,9 @@ interface StrategyVaultCardProps {
   ageValue: string;
   apyValue: string;
   icon?: React.ReactNode;
+  userBalance?: string; // User balance amount
+  tokenSymbol?: string; // Token symbol (e.g., "USDC", "WETH")
+  tokenLogo?: string; // Token logo URL
 }
 
 const StrategyVaultCard = ({
@@ -29,7 +32,24 @@ const StrategyVaultCard = ({
   ageValue,
   apyValue,
   icon,
+  userBalance,
+  tokenSymbol,
+  tokenLogo,
 }: StrategyVaultCardProps) => {
+  // Format user balance for display
+  const formatBalance = (balance?: string) => {
+    if (!balance || parseFloat(balance) === 0) return "-";
+    const num = parseFloat(balance);
+    if (num < 0.001) return "<0.001";
+    if (num < 1) return num.toFixed(6);
+    if (num < 1000) return num.toFixed(4);
+    if (num < 1000000) return `${(num / 1000).toFixed(2)}K`;
+    return `${(num / 1000000).toFixed(2)}M`;
+  };
+
+  const hasBalance = userBalance && parseFloat(userBalance) > 0;
+  const formattedBalance = formatBalance(userBalance);
+
   return (
     <GradientCard
       sx={{ width: "100%" }}
@@ -57,7 +77,7 @@ const StrategyVaultCard = ({
       </Box>
       <Box className="w-full flex flex-col">
         {/* Header with icon and manager chip */}
-        <div className="flex justify-between items-center mb-3 sm:mb-4 mt-2.5">
+        <div className="flex justify-between items-center mb-3 sm:mb-4 mt-4">
           <div className="flex items-center gap-2 sm:gap-4">
             {icon && <div className="w-6 h-6 sm:w-8 sm:h-8">{icon}</div>}
             <Typography
@@ -69,6 +89,17 @@ const StrategyVaultCard = ({
             >
               {name}
             </Typography>
+          </div>
+          <div className="flex gap-2 items-center">
+            <Typography
+              className="text-xs!"
+              sx={{ color: "primary.contrastText" }}
+            >
+              Deposit Asset:
+            </Typography>
+            <div className="w-5">
+              <img src={tokenLogo} alt="tokenlogo" className="object-cover" />
+            </div>
           </div>
         </div>
 
@@ -145,27 +176,64 @@ const StrategyVaultCard = ({
           </Box>
         </div>
 
-        {/* Footer */}
+        {/* Your Balance - Updated to show token symbol and logo */}
         <Box
-          sx={{ backgroundColor: "card.light" }}
+          sx={{
+            backgroundColor: hasBalance ? "success.dark" : "card.light",
+          }}
           className="flex flex-col items-center justify-center p-2 mb-3 sm:mb-4"
         >
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Token Logo */}
+            {tokenLogo && hasBalance && (
+              <div className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0">
+                <img
+                  src={tokenLogo}
+                  alt={tokenSymbol || "token"}
+                  className="w-full h-full object-contain rounded-full"
+                  onError={(e) => {
+                    // Hide image if it fails to load
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Balance Amount */}
+            <Typography
+              sx={{
+                typography: { xs: "body2", sm: "body1" },
+                color: hasBalance ? "success.contrastText" : "inherit",
+                fontWeight: hasBalance ? "medium" : "normal",
+              }}
+            >
+              {formattedBalance}
+            </Typography>
+
+            {/* Token Symbol */}
+            {tokenSymbol && hasBalance && (
+              <Typography
+                sx={{
+                  typography: { xs: "caption", sm: "body2" },
+                  color: hasBalance ? "success.light" : "card.contrastText",
+                  fontWeight: "medium",
+                }}
+              >
+                {tokenSymbol}
+              </Typography>
+            )}
+          </div>
+
           <Typography
             sx={{
-              typography: { xs: "body2", sm: "body1" },
-            }}
-          >
-            -
-          </Typography>
-          <Typography
-            sx={{
-              color: "card.contrastText",
+              color: hasBalance ? "success.light" : "card.contrastText",
               typography: { xs: "caption", sm: "body1" },
             }}
           >
             Your Balance
           </Typography>
         </Box>
+
         <Link href={`/strategy-vaults/${id}`} className="inline-block mx-auto">
           <Typography
             component="a"

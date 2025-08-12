@@ -106,3 +106,5 @@ export const vaultData = [
     ),
   },
 ];
+
+export const BACKEND_URL = "https://api.stablevaults.com";

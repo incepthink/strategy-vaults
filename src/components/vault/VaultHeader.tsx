@@ -1,31 +1,47 @@
+"use client";
+
 import { Box, Chip } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { IconButton, Typography } from "@mui/material";
 import React from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface VaultHeaderProps {
   name: string;
   manager: string;
   icon: React.ReactNode;
+  tokenLogo?: string; // Token logo URL
+  tokenSymbol?: string; // Token symbol for alt text
 }
 
-const VaultHeader = ({ name, manager, icon }: VaultHeaderProps) => {
+const VaultHeader = ({
+  name,
+  manager,
+  icon,
+  tokenLogo,
+  tokenSymbol,
+}: VaultHeaderProps) => {
+  const router = useRouter();
+
+  const handleBackClick = () => {
+    // Use browser's back functionality
+    router.back();
+  };
+
   return (
     <Box className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       {/* Left side - Vault info */}
       <div className="flex items-center gap-3 sm:gap-4">
-        <Link href="/strategy-vaults" className="inline-flex">
-          <IconButton
-            sx={{
-              color: "white",
-              p: 0.5,
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-            }}
-          >
-            <ArrowBackIcon sx={{ fontSize: "24px" }} />
-          </IconButton>
-        </Link>
+        <IconButton
+          onClick={handleBackClick}
+          sx={{
+            color: "white",
+            p: 0.5,
+            "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+          }}
+        >
+          <ArrowBackIcon sx={{ fontSize: "24px" }} />
+        </IconButton>
 
         <div className="w-8 h-8 sm:w-10 sm:h-10">{icon}</div>
         <Typography
@@ -77,17 +93,40 @@ const VaultHeader = ({ name, manager, icon }: VaultHeaderProps) => {
           >
             Deposit:
           </Typography>
-          <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-            <Typography
-              sx={{
-                typography: { xs: "body1", sm: "h6" },
-                color: "white",
-                fontSize: "10px",
-              }}
-            >
-              $
-            </Typography>
-          </div>
+          {tokenLogo ? (
+            <div className="w-5 h-5 rounded-full overflow-hidden">
+              <img
+                src={tokenLogo}
+                alt={tokenSymbol || "token"}
+                className="w-full h-full object-cover"
+                // onError={(e) => {
+                //   // Fallback to dollar sign if token logo fails to load
+                //   const target = e.currentTarget;
+                //   target.style.display = "none";
+                //   const parent = target.parentElement;
+                //   if (parent) {
+                //     parent.className =
+                //       "w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center";
+                //     parent.innerHTML =
+                //       '<span style="color: white; font-size: 10px;">$</span>';
+                //   }
+                // }}
+              />
+            </div>
+          ) : (
+            // Fallback to original dollar sign if no token logo provided
+            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+              <Typography
+                sx={{
+                  typography: { xs: "body1", sm: "h6" },
+                  color: "white",
+                  fontSize: "10px",
+                }}
+              >
+                $
+              </Typography>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">

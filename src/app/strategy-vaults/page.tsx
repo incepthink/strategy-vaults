@@ -1,4 +1,3 @@
-import NavbarVaults from "@/components/strategy-vaults/NavbarVaults";
 import StrategyHeader from "@/components/strategy-vaults/StrategyHeader";
 import VaultFilters from "@/components/strategy-vaults/VaultFilters";
 import VaultGrid from "@/components/strategy-vaults/VaultGrid";
@@ -8,7 +7,6 @@ import React from "react";
 const page = () => {
   return (
     <>
-      <NavbarVaults />
       <Box
         sx={{ backgroundColor: "primary.dark" }}
         className="px-8 py-24 min-h-screen"

@@ -4,6 +4,7 @@ import "./globals.css";
 import MuiThemeProvider from "@/providers/MuiThemeProvider";
 import { Manrope } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import WagmiWalletProvider from "@/providers/WagmiWalletProvider";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -35,8 +36,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${manrope.className} antialiased`}>
         <MuiThemeProvider>
-          {/* <Navbar /> */}
-          {children}
+          <WagmiWalletProvider>
+            <Navbar />
+            {children}
+          </WagmiWalletProvider>
         </MuiThemeProvider>
       </body>
     </html>

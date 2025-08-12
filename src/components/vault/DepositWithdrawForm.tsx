@@ -5,8 +5,13 @@ import React, { useState } from "react";
 import GradientCard from "../GradientCard";
 import DepositForm from "./DepositForm";
 import WithdrawForm from "./WithdrawForm";
+import { VaultDetail } from "@/hooks/useVaults";
 
-const DepositWithdrawForm = () => {
+interface DepositWithdrawFormProps {
+  vault?: VaultDetail;
+}
+
+const DepositWithdrawForm: React.FC<DepositWithdrawFormProps> = ({ vault }) => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Deposit, 1 for Withdraw
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -62,7 +67,11 @@ const DepositWithdrawForm = () => {
       </Box>
 
       {/* Form Content */}
-      {isDeposit ? <DepositForm /> : <WithdrawForm />}
+      {isDeposit ? (
+        <DepositForm vault={vault} />
+      ) : (
+        <WithdrawForm vault={vault} />
+      )}
     </GradientCard>
   );
 };
