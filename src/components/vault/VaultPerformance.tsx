@@ -15,6 +15,7 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
 
   // Fetch vault performance data
   const { data, loading, error } = useVaultPerformance(vaultAddress);
+  console.log(data);
 
   const handleChartTabChange = (
     event: React.SyntheticEvent,
@@ -28,6 +29,37 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
     newValue: number
   ) => {
     setSelectedTimeTab(newValue);
+  };
+
+  // Helper function to format percentage values
+  const formatPercentage = (
+    value: string | null,
+    defaultValue = "-"
+  ): string => {
+    // if (!value || value === null) return defaultValue;
+    // const num = parseFloat(value);
+    // if (!Number.isFinite(num)) return defaultValue;
+    return `${Number(value).toFixed(2)}%`;
+  };
+
+  // Helper function to format decimal numbers
+  const formatNumber = (
+    value: string | null,
+    decimals = 2,
+    defaultValue = "-"
+  ): string => {
+    if (!value || value === null) return defaultValue;
+    const num = parseFloat(value);
+    if (!Number.isFinite(num)) return defaultValue;
+    return num.toFixed(decimals);
+  };
+
+  // Get color for percentage values (red for negative, green for positive)
+  const getPercentageColor = (value: string | null): string => {
+    if (!value) return "white";
+    const num = parseFloat(value);
+    if (!Number.isFinite(num)) return "white";
+    return num < 0 ? "red.400" : "green.400";
   };
 
   // Render loading skeleton for metrics
@@ -108,15 +140,19 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
             {renderMetricSkeleton()}
             {renderMetricSkeleton()}
             {renderMetricSkeleton()}
+            {renderMetricSkeleton()}
+            {renderMetricSkeleton()}
           </>
         ) : error ? (
           // Error state
           <>
-            {renderMetricError("Max Daily Drawdown")}
-            {renderMetricError("30D Trading Volume (USD)")}
-            {renderMetricError("FUEL earned")}
+            {renderMetricError("YTD Return")}
+            {renderMetricError("MTD Return")}
+            {renderMetricError("Cumulative Return")}
+            {renderMetricError("Avg Drawdown")}
+            {renderMetricError("Sharpe Ratio")}
           </>
-        ) : data ? (
+        ) : data?.metrics ? (
           // Success state with real data
           <>
             <div className="flex justify-between items-center">
@@ -125,42 +161,17 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
                   typography: { xs: "body2", sm: "body1" },
                   color: "primary.contrastText",
                 }}
-                className="mb-1"
               >
-                Max Daily Drawdown
+                YTD Return
               </Typography>
               <Typography
                 sx={{
                   typography: { xs: "body1", sm: "h6" },
-                  color:
-                    data.metrics.max_daily_drawdown_pct < 0
-                      ? "red.400"
-                      : "green.400",
+                  color: getPercentageColor(data.metrics.ytd),
                 }}
                 className="font-medium"
               >
-                {data.display.max_daily_drawdown}
-              </Typography>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <Typography
-                sx={{
-                  typography: { xs: "body2", sm: "body1" },
-                  color: "primary.contrastText",
-                }}
-                className="mb-1"
-              >
-                30D Trading Volume (USD)
-              </Typography>
-              <Typography
-                sx={{
-                  typography: { xs: "body1", sm: "h6" },
-                  color: "white",
-                }}
-                className="font-medium"
-              >
-                {data.display.volume_30d_usd}
+                {formatPercentage(data.metrics.ytd)}
               </Typography>
             </div>
 
@@ -171,9 +182,68 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
                   color: "primary.contrastText",
                 }}
               >
-                FUEL earned
+                MTD Return
               </Typography>
+              <Typography
+                sx={{
+                  typography: { xs: "body1", sm: "h6" },
+                  color: getPercentageColor(data.metrics.mtd),
+                }}
+                className="font-medium"
+              >
+                {formatPercentage(data.metrics.mtd)}
+              </Typography>
+            </div>
 
+            <div className="flex justify-between items-center">
+              <Typography
+                sx={{
+                  typography: { xs: "body2", sm: "body1" },
+                  color: "primary.contrastText",
+                }}
+              >
+                Cumulative Return
+              </Typography>
+              <Typography
+                sx={{
+                  typography: { xs: "body1", sm: "h6" },
+                  color: getPercentageColor(data.metrics.cumulative_return),
+                }}
+                className="font-medium"
+              >
+                {formatPercentage(data.metrics.cumulative_return)}
+              </Typography>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Typography
+                sx={{
+                  typography: { xs: "body2", sm: "body1" },
+                  color: "primary.contrastText",
+                }}
+              >
+                Avg Drawdown
+              </Typography>
+              <Typography
+                sx={{
+                  typography: { xs: "body1", sm: "h6" },
+                  color: getPercentageColor(data.metrics.avg_drawdown),
+                }}
+                className="font-medium"
+              >
+                {formatPercentage(data.metrics.avg_drawdown)}
+              </Typography>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Typography
+                sx={{
+                  typography: { xs: "body2", sm: "body1" },
+                  color: "primary.contrastText",
+                }}
+              >
+                Sharpe Ratio
+              </Typography>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                 <Typography
@@ -183,7 +253,7 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
                   }}
                   className="font-medium"
                 >
-                  {data.display.fuel_earned}
+                  {formatNumber(data.metrics.sharpe)}
                 </Typography>
               </div>
             </div>
@@ -191,9 +261,11 @@ const VaultPerformance = ({ vaultAddress }: VaultPerformanceProps) => {
         ) : (
           // No data state
           <>
-            {renderMetricError("Max Daily Drawdown")}
-            {renderMetricError("30D Trading Volume (USD)")}
-            {renderMetricError("FUEL earned")}
+            {renderMetricError("YTD Return")}
+            {renderMetricError("MTD Return")}
+            {renderMetricError("Cumulative Return")}
+            {renderMetricError("Avg Drawdown")}
+            {renderMetricError("Sharpe Ratio")}
           </>
         )}
       </div>

@@ -50,6 +50,8 @@ const VaultGrid: React.FC<VaultGridProps> = ({
     });
   }, [allVaults, userDepositsOnly, byVaultAmount]);
 
+  console.log(vaultsToShow);
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>

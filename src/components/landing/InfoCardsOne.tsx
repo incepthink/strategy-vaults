@@ -24,7 +24,7 @@ const InfoCardsOne = () => {
   const features = [
     {
       id: 1,
-      title: "Best Strategies",
+      title: "Curated Vaults",
       description:
         "Our strategy managers are carefully curated with proven track records",
     },
@@ -32,38 +32,38 @@ const InfoCardsOne = () => {
       id: 2,
       title: "Transparent Custody",
       description:
-        "Stable vaults use CeFi and Copper thereby always maintaining a Proof of Reserve",
+        "Custodians like Ceffu and Copper always provide a Proof of Reserve",
     },
     {
       id: 3,
       title: "Diversified Portfolio",
       description:
-        "Our strategy managers are carefully curated with proven track records",
+        "Combine multiple strategies to create a perfect blend for your capital",
     },
     {
       id: 4,
-      title: "Best Strategies",
+      title: "Security",
       description:
-        "Our strategy managers are carefully curated with proven track records",
+        "Our vaults are secure, only you can deposit and withdraw assets",
     },
-    {
-      id: 5,
-      title: "Best Strategies",
-      description:
-        "Our strategy managers are carefully curated with proven track records",
-    },
-    {
-      id: 6,
-      title: "Diversified Portfolio",
-      description:
-        "Our strategy managers are carefully curated with proven track records",
-    },
+    // {
+    //   id: 5,
+    //   title: "Best Strategies",
+    //   description:
+    //     "Our strategy managers are carefully curated with proven track records",
+    // },
+    // {
+    //   id: 6,
+    //   title: "Diversified Portfolio",
+    //   description:
+    //     "Our strategy managers are carefully curated with proven track records",
+    // },
   ];
 
   return (
     <div className="w-full">
       <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-8 sm:mb-12 lg:mb-18">
-        Capital Markets meet on-chain tokens
+        Smart Sophisticated Strategies
       </h2>
       <Box sx={{ flexGrow: 1, margin: "0 auto" }}>
         <Grid container spacing={2}>
@@ -179,7 +179,7 @@ const InfoCardsOne = () => {
             </Item>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 4 }}>
+          {/* <Grid size={{ xs: 12, md: 4 }}>
             <Item
               sx={{
                 px: { xs: 2, md: 6 },
@@ -233,7 +233,7 @@ const InfoCardsOne = () => {
                 {features[5].description}
               </Typography>
             </Item>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
     </div>

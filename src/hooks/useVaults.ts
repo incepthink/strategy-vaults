@@ -9,8 +9,8 @@ export interface StrategyVaultCardProps {
   name: string;
   manager: string;
   managerColor?: string;
-  tvl: string; // display only (you can wire real TVL later)
-  tvlAmount: string; // not used in UI right now
+  tvl: string; // display formatted TVL
+  tvlAmount: string; // decimal normalized amount (e.g., "1234.56")
   apy: string; // label only (not used)
   age: string; // label only (not used)
   ageValue: string; // shown in card
@@ -70,7 +70,8 @@ export type VaultDetail = {
   managerLabel: string; // for <VaultHeader />
   apyValue: string; // for <VaultStats />
   ageValue: string; // for <VaultStats />
-  tvl: string; // for <VaultStats /> (display-only for now)
+  tvl: string; // for <VaultStats /> (formatted display)
+  tvlAmount: string; // decimal normalized amount
   capacity: string; // for <VaultStats /> (display-only for now)
   deposit_token: TokenInfo; // token details
   raw: VaultDTO; // full payload if you need more
@@ -88,6 +89,55 @@ export const getTokenInfo = (vault: VaultDTO): TokenInfo => {
     is_verified: vault.depositToken.is_verified,
   };
 };
+
+// ★ NEW: Convert wei to decimal normalized amount
+function formatUnits(wei: string, decimals: number): string {
+  try {
+    const weiAmount = BigInt(wei);
+    const divisor = BigInt(10) ** BigInt(decimals);
+    const integerPart = weiAmount / divisor;
+    const fractionalPart = weiAmount % divisor;
+
+    if (fractionalPart === BigInt(0)) {
+      return integerPart.toString();
+    }
+
+    // Convert fractional part to string with leading zeros
+    const fractionalStr = fractionalPart.toString().padStart(decimals, "0");
+    // Remove trailing zeros
+    const trimmedFractional = fractionalStr.replace(/0+$/, "");
+
+    if (trimmedFractional === "") {
+      return integerPart.toString();
+    }
+
+    return `${integerPart}.${trimmedFractional}`;
+  } catch (error) {
+    console.error("Error formatting units:", error);
+    return "0";
+  }
+}
+
+// ★ NEW: Format TVL for display with appropriate suffixes
+function formatTVLDisplay(amount: string, symbol: string): string {
+  try {
+    const num = parseFloat(amount);
+    if (!Number.isFinite(num) || num === 0) return "-";
+
+    if (num < 1000) {
+      return `${num.toFixed(2)} ${symbol}`;
+    } else if (num < 1000000) {
+      return `${(num / 1000).toFixed(2)}K ${symbol}`;
+    } else if (num < 1000000000) {
+      return `${(num / 1000000).toFixed(2)}M ${symbol}`;
+    } else {
+      return `${(num / 1000000000).toFixed(2)}B ${symbol}`;
+    }
+  } catch (error) {
+    console.error("Error formatting TVL display:", error);
+    return "-";
+  }
+}
 
 function fmtPercent(decStr?: string) {
   if (!decStr) return "-";
@@ -145,6 +195,37 @@ export function useVaults(params?: {
     return q;
   }, [params]);
 
+  const mapVaultData = (rows: VaultDTO[]): StrategyVaultCardProps[] => {
+    return rows.map((v) => {
+      // ★ Convert TVL from wei to decimal amount
+      const tvlAmount = formatUnits(v.tvl_wei || "0", v.depositToken.decimals);
+      const tvlDisplay = formatTVLDisplay(tvlAmount, v.depositToken.symbol);
+
+      return {
+        id: v.id,
+        name: v.name,
+        manager: v.managerRef?.name || shortAddr(v.manager),
+        managerColor: "primary",
+        tvl: tvlDisplay, // ★ Now shows formatted TVL like "1.23K USDC"
+        tvlAmount: tvlAmount, // ★ Decimal amount like "1234.56"
+        apy: "90D APY",
+        age: "AGE",
+        ageValue: fmtAge(v.createdAt),
+        apyValue: `${Number(v.apy_90d).toFixed(2)}%`,
+        // Include deposit token information from API
+        depositToken: {
+          symbol: v.depositToken.symbol,
+          logo_url: v.depositToken.logo_url,
+          address: v.depositToken.address,
+          name: v.depositToken.name,
+          decimals: v.depositToken.decimals,
+          is_verified: v.depositToken.is_verified,
+        },
+        raw: v, // Include raw data for fallback access
+      };
+    });
+  };
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -158,28 +239,8 @@ export function useVaults(params?: {
         const rows: VaultDTO[] = Array.isArray(responseData)
           ? responseData
           : responseData?.data || [];
-        const mapped: StrategyVaultCardProps[] = rows.map((v) => ({
-          id: v.id,
-          name: v.name,
-          manager: v.managerRef?.name || shortAddr(v.manager),
-          managerColor: "primary",
-          tvl: "-", // wire real TVL when you add pricing/decimals
-          tvlAmount: "-",
-          apy: "90D APY",
-          age: "AGE",
-          ageValue: fmtAge(v.createdAt),
-          apyValue: fmtPercent(v.apy_90d),
-          // Include deposit token information from API
-          depositToken: {
-            symbol: v.depositToken.symbol,
-            logo_url: v.depositToken.logo_url,
-            address: v.depositToken.address,
-            name: v.depositToken.name,
-            decimals: v.depositToken.decimals,
-            is_verified: v.depositToken.is_verified,
-          },
-          raw: v, // Include raw data for fallback access
-        }));
+
+        const mapped = mapVaultData(rows);
         if (!cancelled) setData(mapped);
       })
       .catch((e) => {
@@ -201,28 +262,7 @@ export function useVaults(params?: {
         ? responseData
         : responseData?.data || [];
 
-      const mapped: StrategyVaultCardProps[] = rows.map((v) => ({
-        id: v.id,
-        name: v.name,
-        manager: v.managerRef?.name || shortAddr(v.manager),
-        managerColor: "primary",
-        tvl: "-",
-        tvlAmount: "-",
-        apy: "90D APY",
-        age: "AGE",
-        ageValue: fmtAge(v.createdAt),
-        apyValue: fmtPercent(v.apy_90d),
-        // Include deposit token information from API
-        depositToken: {
-          symbol: v.depositToken.symbol,
-          logo_url: v.depositToken.logo_url,
-          address: v.depositToken.address,
-          name: v.depositToken.name,
-          decimals: v.depositToken.decimals,
-          is_verified: v.depositToken.is_verified,
-        },
-        raw: v,
-      }));
+      const mapped = mapVaultData(rows);
       setData(mapped);
       return mapped;
     });
@@ -244,14 +284,19 @@ export function useVault(id?: string | number) {
       const v = res.data;
       const tokenInfo = getTokenInfo(v);
 
+      // ★ Convert TVL from wei to decimal amount
+      const tvlAmount = formatUnits(v.tvl_wei || "0", v.depositToken.decimals);
+      const tvlDisplay = formatTVLDisplay(tvlAmount, v.depositToken.symbol);
+
       const mapped: VaultDetail = {
         id: v.id,
         address: v.address,
         name: v.name,
         managerLabel: v.managerRef?.name || shortAddr(v.manager),
-        apyValue: fmtPercent(v.apy_90d),
+        apyValue: `${Number(v.apy_90d).toFixed(2)}%`,
         ageValue: fmtAge(v.createdAt),
-        tvl: "-", // wire real formatted TVL later
+        tvl: tvlDisplay, // ★ Formatted display like "1.23K USDC"
+        tvlAmount: tvlAmount, // ★ Decimal amount like "1234.56"
         capacity: "-", // wire real formatted capacity later
         deposit_token: tokenInfo,
         raw: v,
