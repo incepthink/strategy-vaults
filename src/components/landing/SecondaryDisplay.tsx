@@ -25,9 +25,9 @@ const SecondaryDisplay = () => {
         <h1
           className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-relaxed font-medium text-center text-white`}
         >
-          Lorem ipsum dolor sit amet consectetur. Mattis consectetur id egestas
-          pharetra at. Iaculis et donec a posuere vitae consequat. Id auctor
-          augue feugiat eget gravida vel donec quam.
+          Institutional-Grade DeFi Strategies. Professional vault management
+          with proven risk-adjusted returns across multiple blockchain
+          ecosystems.
         </h1>
       </div>
     </Box>
