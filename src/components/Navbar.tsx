@@ -67,7 +67,7 @@ const Navbar = () => {
             sx={{
               minWidth: { xs: "100px", sm: "120px", md: "140px" },
               fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
-              padding: { xs: "6px 12px", sm: "8px 16px", md: "10px 20px" },
+              padding: { xs: "6px 12px", sm: "8px 16px", md: "8px 16px" },
             }}
           />
         </div>
