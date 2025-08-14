@@ -21,7 +21,7 @@ const GradientCard = ({
       case "fast":
         return "2s";
       default:
-        return "10s";
+        return "6s";
     }
   };
 
