@@ -63,13 +63,7 @@ const Navbar = () => {
 
         {/* Desktop Connect Button */}
         <div className="hidden md:block">
-          <ConnectButton
-            sx={{
-              minWidth: { xs: "100px", sm: "120px", md: "140px" },
-              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
-              padding: { xs: "6px 12px", sm: "8px 16px", md: "8px 16px" },
-            }}
-          />
+          <ConnectButton />
         </div>
 
         {/* Mobile Hamburger Menu Button */}
@@ -138,14 +132,7 @@ const Navbar = () => {
 
         {/* Mobile Connect Button */}
         <div className="px-4 py-6 border-t border-gray-700">
-          <ConnectButton
-            sx={{
-              width: "100%",
-              minHeight: "48px",
-              fontSize: "1rem",
-              fontWeight: 500,
-            }}
-          />
+          <ConnectButton />
         </div>
       </div>
     </>

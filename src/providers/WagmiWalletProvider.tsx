@@ -97,9 +97,9 @@ const WagmiWalletProvider = ({ children }: any) => {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           theme={darkTheme({
-            accentColor: "#00F5E0",
-            accentColorForeground: "#000",
-            borderRadius: "small",
+            accentColor: "#3B82F6",
+            accentColorForeground: "#fff",
+            borderRadius: "medium",
             overlayBlur: "small",
           })}
         >

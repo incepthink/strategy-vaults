@@ -30,7 +30,7 @@ const MuiThemeProvider = ({ children }: any) => {
     },
     gradients: {
       primary: "linear-gradient(0deg, #113355 0%, #3A7BD5 50%, #00D2FF 100%)",
-      red: "linear-gradient(to top, #3F1D38 0%, #AF5279 50%, #FFD6A5 100%)",
+      red: "linear-gradient(to top, #8B0000 0%, #CC0000 50%, #FF0000 100%)",
     },
     components: {
       MuiButton: {
@@ -57,11 +57,11 @@ const MuiThemeProvider = ({ children }: any) => {
             props: { variant: "gradientRed" },
             style: {
               background:
-                "linear-gradient(to top, #3F1D38 0%, #AF5279 50%, #FFD6A5 100%)",
+                "linear-gradient(to top, #8B0000 0%, #CC0000 50%, #FF0000 100%)",
               color: "#fff",
               "&:hover": {
                 background:
-                  "linear-gradient(to top, #3F1D38 0%, #AF5279 50%, #FFD6A5 100%)",
+                  "linear-gradient(to top, #8B0000 0%, #CC0000 50%, #FF0000 100%)",
               },
             },
           },
