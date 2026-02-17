@@ -61,7 +61,9 @@ const ProfileHeader = () => {
         {isConnected ? (
           <p className="text-lg sm:text-xl">{address}</p>
         ) : (
-          <ConnectButton sx={{ marginTop: "16px", fontSize: 16 }} />
+          <div style={{ marginTop: "16px", fontSize: 16 }}>
+            <ConnectButton />
+          </div>
         )}
       </div>
 
