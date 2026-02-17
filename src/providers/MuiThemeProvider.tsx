@@ -29,8 +29,8 @@ const MuiThemeProvider = ({ children }: any) => {
       },
     },
     gradients: {
-      primary: "linear-gradient(0deg, #113355 0%, #3A7BD5 50%, #00D2FF 100%)",
-      red: "linear-gradient(to top, #8B0000 0%, #CC0000 50%, #FF0000 100%)",
+      primary: "#2896E2",
+      red: "#DC143C",
     },
     components: {
       MuiButton: {
